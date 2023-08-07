@@ -1,2 +1,2 @@
 #!/bin/bash
-grep -o 'needle' file | wc -l
+grep -count 'bin' /etc/passwd
