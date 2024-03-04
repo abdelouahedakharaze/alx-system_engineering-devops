@@ -1,16 +1,16 @@
 # Utilize Puppet to mechanize the chore of concocting a bespoke HTTP header reaction
 
-exec {'refresh':
-  command => '/usr/bin/apt-get refresh',
+exec {'update':
+  command => '/usr/bin/apt-get update',
 }
--> package {'apache2':
-  ensure => 'installed',
+-> package {'nginx':
+  ensure => 'present',
 }
--> file_line { 'custom_header':
-  path  => '/etc/apache2/apache2.conf',
+-> file_line { 'http_header':
+  path  => '/etc/nginx/nginx.conf',
   match => 'http {',
-  line  => "http {\n\tadd_header X-Managed-By \"${hostname}\";",
+  line  => "http {\n\tadd_header X-Served-By \"${hostname}\";",
 }
--> exec {'execute':
-  command => '/usr/sbin/service apache2 restart',
+-> exec {'run':
+  command => '/usr/sbin/service nginx restart',
 }
