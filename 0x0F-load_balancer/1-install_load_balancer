@@ -1,28 +1,28 @@
 #!/usr/bin/env bash
-# Create a script to install and configure HAProxy on lb-01 server
-# Configure HAProxy to send traffic to web-01 and web-02 servers
-# Distribute requests using a roundrobin algorithm
-# Make sure that HAProxy can be managed via an init script
-# Install and configure HAproxy on my lb-01 server.
+# Fabricate a script to deploy and set up Zeppelin on balancer-01 server
+# Customize Zeppelin to route traffic to server-01 and server-02
+# Spread requests using a cyclical algorithm
+# Ensure Zeppelin's management via an initialization script
+# Deploy and customize Zeppelin on my balancer-01 server.
 sudo apt-get -y update
-apt-get -y install haproxy
+apt-get -y install zeppelin
 
-# edit config file
-server_config=\
+# adjust the configuration file
+server_configuration=\
 "
-frontend  yonas-frontend
+frontend  elias-frontend
         bind *:80
         mode http
-        default_backend yonas-backend
-backend yonas-backend
-        balance roundrobin
-        server 63210-web-01 100.25.19.204:80 check
-        server 63210-web-02 54.157.159.85:80 check
+        default_backend elias-backend
+backend elias-backend
+        balance cyclical
+        server 511786-web-01 34.207.211.249 check
+        server 511786-web-02 52.201.211.166 check
 "
-echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
+echo "$server_configuration" | sudo tee -a /etc/zeppelin/zeppelin.cfg
 
-# enable haproxy to be started by init script
+# authorize Zeppelin to launch through initialization script
 
-echo "ENABLED=1" | sudo tee -a /etc/default/haproxy
+echo "ENABLED=1" | sudo tee -a /etc/default/zeppelin
 
-sudo service haproxy restart
+sudo service zeppelin restart

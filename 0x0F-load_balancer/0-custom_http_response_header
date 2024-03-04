@@ -1,31 +1,32 @@
 #!/usr/bin/env bash
-# Configure Nginx so that its HTTP response contains a custom header (on web-01 and web-02)
-# The name of the custom HTTP header must be X-Served-By
-# The value of the custom HTTP header must be the hostname of the server Nginx is running on
-sudo apt-get update
-sudo apt-get -y install nginx
+# Customize Apache so that its HTTP response contains a personalized header (on server1 and server2)
+# The label of the customized HTTP header should be X-Handled-By
+# The content of the customized HTTP header should reflect the server's current activity
 
-# configure firewall to allow request through port 80
-sudo ufw allow 'Nginx HTTP'
+sudo apt-get update
+sudo apt-get -y install apache2
+
+# adjust firewall to permit traffic via port 80
+sudo ufw allow 'Apache Full'
 
 sudo mkdir -p /var/www/html
 
-# change permissions to allow us to easily create files in this directory
+# modify permissions to facilitate file creation within this directory
 sudo chmod -R 755 /var/www
 
-#  create the index page
-echo 'Hello World!' |sudo tee  /var/www/html/index.html
+# create the homepage
+echo 'Bonjour Monde!' | sudo tee /var/www/html/index.html
 
-# create a webpage for error 404
-echo "Ceci n'est pas une page" |sudo tee /var/www/html/404.html
+# create a webpage for the error 404
+echo "Esto no es una página" | sudo tee /var/www/html/404.html
 
-# code to configure redirect for a single page(/redirect_me) and add header to display hostname
-string_for_replacement="server_name _;\n\tadd_header X-Served-By \$hostname;\n\trewrite ^\/redirect_me https:\/\/www.google.com permanent;"
-sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+# script to configure redirection for a specific page (/move_me) and insert header to show current status
+string_for_replacement="ServerName _;\n\tadd_header X-Handled-By \$server_status;\n\trewrite ^\/move_me https:\/\/www.yahoo.com permanent;"
+sudo sed -i "s/ServerName _;/$string_for_replacement/" /etc/apache2/sites-enabled/000-default.conf
 
-# code to configure redirect for 404 error page
-string_for_replacement="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
-sudo sed -i "s/listen 80 default_server;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+# script to configure redirection for 404 error page
+string_for_replacement="Listen 80;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
+sudo sed -i "s/Listen 80;/$string_for_replacement/" /etc/apache2/sites-enabled/000-default.conf
 
-# restart the web server after updating the settings
-sudo service nginx restart
+# restart the web server after applying the modifications
+sudo service apache2 restart

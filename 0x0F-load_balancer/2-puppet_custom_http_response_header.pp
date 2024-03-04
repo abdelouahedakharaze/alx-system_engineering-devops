@@ -1,16 +1,16 @@
-# Use Puppet to automate the task of creating a custom HTTP header response
+# Utilize Puppet to mechanize the chore of concocting a bespoke HTTP header reaction
 
-exec {'update':
-  command => '/usr/bin/apt-get update',
+exec {'refresh':
+  command => '/usr/bin/apt-get refresh',
 }
--> package {'nginx':
-  ensure => 'present',
+-> package {'apache2':
+  ensure => 'installed',
 }
--> file_line { 'http_header':
-  path  => '/etc/nginx/nginx.conf',
+-> file_line { 'custom_header':
+  path  => '/etc/apache2/apache2.conf',
   match => 'http {',
-  line  => "http {\n\tadd_header X-Served-By \"${hostname}\";",
+  line  => "http {\n\tadd_header X-Managed-By \"${hostname}\";",
 }
--> exec {'run':
-  command => '/usr/sbin/service nginx restart',
+-> exec {'execute':
+  command => '/usr/sbin/service apache2 restart',
 }
